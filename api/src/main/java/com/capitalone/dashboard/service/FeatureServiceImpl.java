@@ -259,7 +259,7 @@ public class FeatureServiceImpl implements FeatureService {
 			if (agileType.isPresent() && FeatureCollectorConstants.KANBAN_SPRINT_ID
 					.equalsIgnoreCase(agileType.get())) {
 				// Kanban
-				storyEstimates = featureRepository.getSprintBacklogTotal(teamId,
+				storyEstimates = featureRepository.getKanbanThroughput(teamId, getOneMonthAgoISODateTime(),
 						getCurrentISODateTime(), EQUAL, FeatureCollectorConstants.KANBAN_SPRINT_ID);
 			} else if (agileType.isPresent() && FeatureCollectorConstants.SCRUM_SPRINT_ID
 					.equalsIgnoreCase(agileType.get())) {
@@ -453,6 +453,12 @@ public class FeatureServiceImpl implements FeatureService {
 	private String getCurrentISODateTime() {
 		return DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
 	}
+    
+    private String getOneMonthAgoISODateTime() {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.add(Calendar.MONTH, -1);
+        return DatatypeConverter.printDateTime(cal);
+    }
 	
 	private boolean isEstimateTime(Optional<String> estimateMetricType) {
 		return estimateMetricType.isPresent() && FeatureCollectorConstants.STORY_HOURS_ESTIMATE.equalsIgnoreCase(estimateMetricType.get());
