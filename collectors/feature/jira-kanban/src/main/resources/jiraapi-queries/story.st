@@ -1,0 +1,1 @@
+story(project) ::= "project='$project$' AND status not in (closed,open) and (resolutiondate=null or resolutiondate >= -30d) ORDER BY updated ASC"

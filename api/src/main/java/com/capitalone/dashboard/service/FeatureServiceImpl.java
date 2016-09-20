@@ -26,10 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
+import org.apache.log4j.Logger;
 
 @Service
 public class FeatureServiceImpl implements FeatureService {
 
+    private static final Logger LOGGER = Logger.getLogger(FeatureServiceImpl.class);
 	private final ComponentRepository componentRepository;
 	private final FeatureRepository featureRepository;
 	private final CollectorRepository collectorRepository;
@@ -128,7 +130,7 @@ public class FeatureServiceImpl implements FeatureService {
 
 		// Get teamId first from available collector item, based on
 		// component
-		List<Feature> relevantStories = new ArrayList<Feature>();
+		List<Feature> relevantStories;
 		if (agileType.isPresent()
 				&& FeatureCollectorConstants.KANBAN_SPRINT_ID.equalsIgnoreCase(agileType.get())) {
 			// Kanban
@@ -181,7 +183,7 @@ public class FeatureServiceImpl implements FeatureService {
 		builder.and(team.collectorItemId.eq(item.getId()));
 
 		// Get teamId first from available collector item, based on component
-		List<Feature> relevantFeatureEstimates = new ArrayList<Feature>();
+		List<Feature> relevantFeatureEstimates;
 		if (agileType.isPresent()
 				&& FeatureCollectorConstants.KANBAN_SPRINT_ID.equalsIgnoreCase(agileType.get())) {
 			// Kanban
@@ -416,7 +418,7 @@ public class FeatureServiceImpl implements FeatureService {
 		builder.and(team.collectorItemId.eq(item.getId()));
 
 		// Get teamId first from available collector item, based on component
-		List<Feature> sprintResponse = new ArrayList<Feature>();
+		List<Feature> sprintResponse;
 		if (agileType.isPresent()
 				&& FeatureCollectorConstants.KANBAN_SPRINT_ID.equalsIgnoreCase(agileType.get())) {
 			// Kanban
@@ -461,7 +463,7 @@ public class FeatureServiceImpl implements FeatureService {
 		
 		if (isEstimateTime(estimateMetricType)) {
 			if (feature.getsEstimateTime() != null) {
-				rt = feature.getsEstimateTime().intValue();
+				rt = feature.getsEstimateTime();
 			}
 		} else {
 			// default to story points since that should be the most common use case

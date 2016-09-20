@@ -15,10 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,66 +55,23 @@ import com.google.common.collect.Lists;
 public class DefaultJiraClient implements JiraClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJiraClient.class);
 	
-	private final DateFormat QUERY_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    //private static final String EXPAND_CHANGELOG = "&expand=changelog";
 	
 	private static final Set<String> DEFAULT_FIELDS = new HashSet<>();
 	static {
-		DEFAULT_FIELDS.add("*all,-comment,-watches,-worklog,-votes,-reporter,-creator,-attachment");
+		DEFAULT_FIELDS.add("*all");
 	}
 	
 	private final FeatureSettings featureSettings;
 	private final FeatureWidgetQueries featureWidgetQueries;
 	
-	private JiraRestClient client;
+	private final JiraRestClient client;
 	
 	@Autowired
 	public DefaultJiraClient(FeatureSettings featureSettings, FeatureWidgetQueries featureWidgetQueries, JiraRestClientSupplier restSupplier) {
 		this.featureSettings = featureSettings;
 		this.featureWidgetQueries = featureWidgetQueries;
 		this.client = restSupplier.get();
-	}
-	
-	@Override
-	public List<Issue> getIssues(long startTime, int pageStart) {
-		List<Issue> rt = new ArrayList<>();
-		
-		if (client != null) {
-			try {
-				// example "1900-01-01 00:00"
-				String startDateStr = QUERY_DATE_FORMAT.format(new Date(startTime));
-				
-				String query = featureWidgetQueries.getStoryQuery(startDateStr,
-						featureSettings.getJiraIssueTypeId(), featureSettings.getStoryQuery());
-				
-				Promise<SearchResult> promisedRs = client.getSearchClient().searchJql(
-						query, featureSettings.getPageSize(), pageStart, DEFAULT_FIELDS);
-				
-				SearchResult sr = promisedRs.claim();
-
-				Iterable<Issue> jiraRawRs = sr.getIssues();
-				
-				if (jiraRawRs != null) {
-					if (LOGGER.isDebugEnabled()) {
-						int pageEnd = Math.min(pageStart + getPageSize() - 1, sr.getTotal());
-						
-						LOGGER.debug(String.format("Processing issues %d - %d out of %d", pageStart, pageEnd, sr.getTotal()));
-					}
-					
-					rt = Lists.newArrayList(jiraRawRs);
-				}
-			} catch (RestClientException e) {
-				if (e.getStatusCode().get() != null && e.getStatusCode().get() == 401 ) {
-					LOGGER.error("Error 401 connecting to JIRA server, your credentials are probably wrong. Note: Ensure you are using JIRA user name not your email address.");
-				} else {
-					LOGGER.error("No result was available from Jira unexpectedly - defaulting to blank response. The reason for this fault is the following:" + e.getCause());
-				}
-				LOGGER.debug("Exception", e);
-			}
-		} else {
-			LOGGER.warn("Jira client setup failed. No results obtained. Check your jira setup.");
-		}
-		
-		return rt;
 	}
 
 	@Override
@@ -182,6 +136,8 @@ public class DefaultJiraClient implements JiraClient {
 	
 	/**
 	 * 
+     * @param epicKeys
+     * @return list of issues
 	 */
 	@Override
 	public List<Issue> getEpics(List<String> epicKeys) {
@@ -235,7 +191,7 @@ public class DefaultJiraClient implements JiraClient {
 		try {			
 			URL url = new URL(featureSettings.getJiraBaseUrl() + (featureSettings.getJiraBaseUrl().endsWith("/")? "" : "/") 
 					+ featureSettings.getJiraQueryEndpoint() + (featureSettings.getJiraQueryEndpoint().endsWith("/")? "" : "/") + "status/");
-			URLConnection connection = null;
+			URLConnection connection;
 			
 			if (featureSettings.getJiraProxyUrl() != null && !featureSettings.getJiraProxyUrl().isEmpty() && (featureSettings.getJiraProxyPort() != null)) {
 				String fullProxyUrl = featureSettings.getJiraProxyUrl() + ":" + featureSettings.getJiraProxyPort();
@@ -282,7 +238,7 @@ public class DefaultJiraClient implements JiraClient {
                     String statusName = (String) jsonStatus.get("name");
                     
                     Object statusCategory = jsonStatus.get("statusCategory");
-                    String statusCategoryName = null;
+                    String statusCategoryName;
                     if (null == statusCategory) {
                         // Versions pre 7.x do not have statusCategory.  
                         // To avoid problems, just use the status name
@@ -314,4 +270,44 @@ public class DefaultJiraClient implements JiraClient {
 		
 		return statusMap;
 	}
+
+    @Override
+    public List<Issue> getIssues(String project, int pageStart) {
+		List<Issue> rt = new ArrayList<>();
+		
+		if (client != null) {
+			try {
+				
+                String query = featureWidgetQueries.getStoryQuery(project, featureSettings.getStoryQuery());
+				
+				Promise<SearchResult> promisedRs = client.getSearchClient().searchJql(
+						query, featureSettings.getPageSize(), pageStart, DEFAULT_FIELDS);
+				
+				SearchResult sr = promisedRs.claim();
+
+				Iterable<Issue> jiraRawRs = sr.getIssues();
+				
+				if (jiraRawRs != null) {
+					if (LOGGER.isDebugEnabled()) {
+						int pageEnd = Math.min(pageStart + getPageSize() - 1, sr.getTotal());
+						
+						LOGGER.debug(String.format("Processing issues %d - %d out of %d", pageStart, pageEnd, sr.getTotal()));
+					}
+					
+					rt = Lists.newArrayList(jiraRawRs);
+				}
+			} catch (RestClientException e) {
+				if (e.getStatusCode().get() != null && e.getStatusCode().get() == 401 ) {
+					LOGGER.error("Error 401 connecting to JIRA server, your credentials are probably wrong. Note: Ensure you are using JIRA user name not your email address.");
+				} else {
+					LOGGER.error("No result was available from Jira unexpectedly - defaulting to blank response. The reason for this fault is the following:" + e.getCause());
+				}
+				LOGGER.debug("Exception", e);
+			}
+		} else {
+			LOGGER.warn("Jira client setup failed. No results obtained. Check your jira setup.");
+		}
+		
+		return rt;
+    }
 }

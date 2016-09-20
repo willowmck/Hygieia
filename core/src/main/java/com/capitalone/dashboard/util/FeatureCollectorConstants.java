@@ -12,6 +12,7 @@ package com.capitalone.dashboard.util;
  */
 public final class FeatureCollectorConstants {
         public static final String JIRA = "Jira";
+        public static final String JIRA_KANBAN = "JiraKanban";
         public static final String VERSIONONE = "VersionOne";
         @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
         // not an IP

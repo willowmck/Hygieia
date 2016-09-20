@@ -220,7 +220,7 @@ public class StoryDataClientImpl implements StoryDataClient {
 					// ID
 					feature.setsId(TOOLS.sanitizeResponse(issue.getId()));
 
-					processFeatureData(feature, issue, fields);
+					processFeatureData(feature, issue, fields, sprint == null);
 					
 					// delay processing epic data for performance
 					if (epic != null && epic.getValue() != null && !TOOLS.sanitizeResponse(epic.getValue()).isEmpty()) {
@@ -260,7 +260,33 @@ public class StoryDataClientImpl implements StoryDataClient {
 		}
 	}
 	
-	private void processFeatureData(Feature feature, Issue issue, Map<String, IssueField> fields) {
+    private void setEstimateForTimeTracking(Feature feature, Issue issue, Map<String, IssueField> fields) {
+        
+        int originalEstimate = 0;
+        // Tasks use timetracking, stories use aggregatetimeoriginalestimate and aggregatetimeestimate
+        if (issue.getTimeTracking() != null && issue.getTimeTracking().getOriginalEstimateMinutes() != null) {
+            originalEstimate = issue.getTimeTracking().getOriginalEstimateMinutes();
+        } else if (fields.get("aggregatetimeoriginalestimate") != null
+                && fields.get("aggregatetimeoriginalestimate").getValue() != null) {
+            // this value is in seconds
+            originalEstimate = ((Integer)fields.get("aggregatetimeoriginalestimate").getValue()) / 60;
+        }
+
+        feature.setsEstimateTime(originalEstimate);
+    }
+    
+    private void setEstimateForStoryPoints(Feature feature, Map<String, IssueField> fields) {
+        IssueField storyPointsField = fields.get(featureSettings.getJiraStoryPointsFieldName());
+        if (storyPointsField != null && storyPointsField.getValue() != null && 
+                !TOOLS.sanitizeResponse(storyPointsField.getValue()).isEmpty()) {
+            Double value = Double.parseDouble(TOOLS.sanitizeResponse(storyPointsField.getValue()));
+            feature.setsEstimate(String.valueOf(value.intValue()));
+        } else {
+            feature.setsEstimate("0");
+        }
+    }
+
+	private void processFeatureData(Feature feature, Issue issue, Map<String, IssueField> fields, boolean isKanban) {
 		BasicProject project = issue.getProject();
 		String status = this.toCanonicalFeatureStatus(issue.getStatus().getName());
 		String changeDate = issue.getUpdateDate().toString();
@@ -277,27 +303,16 @@ public class StoryDataClientImpl implements StoryDataClient {
 		// sState
 		feature.setsState(TOOLS.sanitizeResponse(status));
 		
-		int originalEstimate = 0;
-		
-		// Tasks use timetracking, stories use aggregatetimeoriginalestimate and aggregatetimeestimate
-		if (issue.getTimeTracking() != null && issue.getTimeTracking().getOriginalEstimateMinutes() != null) {
-			originalEstimate = issue.getTimeTracking().getOriginalEstimateMinutes();
-		} else if (fields.get("aggregatetimeoriginalestimate") != null
-				&& fields.get("aggregatetimeoriginalestimate").getValue() != null) {
-			// this value is in seconds
-			originalEstimate = ((Integer)fields.get("aggregatetimeoriginalestimate").getValue()) / 60;
-		}
-		
-		feature.setsEstimateTime(originalEstimate);
-		
-		// sStoryPoints
-		IssueField storyPointsField = fields.get(featureSettings.getJiraStoryPointsFieldName());
-		if (storyPointsField != null && storyPointsField.getValue() != null && !TOOLS.sanitizeResponse(storyPointsField.getValue()).isEmpty()) {
-			Double value = Double.parseDouble(TOOLS.sanitizeResponse(storyPointsField.getValue()));
-			feature.setsEstimate(String.valueOf(value.intValue()));
-		} else {
-			feature.setsEstimate("0");
-		}
+        if (isKanban)
+        {
+            // Use story points and just increment it for Kanban
+            feature.setsEstimate("1");
+        }
+		else
+        {
+            setEstimateForTimeTracking(feature, issue, fields);
+            setEstimateForStoryPoints(feature, fields);
+        }
 
 		// sChangeDate
 		feature.setChangeDate(TOOLS.toCanonicalDate(TOOLS.sanitizeResponse(changeDate)));
