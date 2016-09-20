@@ -77,6 +77,9 @@ public interface FeatureRepository extends CrudRepository<Feature, ObjectId>,
 	@Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $and : [{'sSprintID' : {$ne : null} , {'sSprintID' : {?2 : ?3}} , {'sSprintBeginDate' : {$lte : ?1}} , {'sSprintEndDate' : {$gte : ?1}}]}, $orderby: { 'sEpicID' :-1 }", fields = "{'sEpicID' : 1,'sEpicNumber' : 1,'sEpicName' : 1,'sEstimate' : 1,'sEstimateTime' : 1}")
 	List<Feature> getInProgressFeaturesEstimatesByTeamId(String sTeamID, String currentISODateTime, String agileTypeAggregate, String agileType);
 
+    @Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $or : [{'sStatus' : 'In Progress'} , {'sStatus' : 'Waiting'} , {'sStatus' : 'Impeded'}] , $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?3 : ?4}} , {'sSprintBeginDate' : {$lte : ?1}} , {'sSprintEndDate' : {$gte : ?2}}]}, $orderby: { 'sEpicID' :-1 }", fields = "{'sEpicID' : 1, 'sEpicNumber' : 1, 'sEpicName' : 1, 'sEstimate' : 1, 'sEstimateTime' : 1}")
+    List<Feature> getInProgressKanbanFeaturesEstimatesByTeamId(String sTeamID, String startISODateTime, String currentISODateTime, String agileTypeAggregate, String agileType);
+    
 	@Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?2 : ?3}} , {'sSprintBeginDate' : {$lte : ?1}} , {'sSprintEndDate' : {$gte : ?1}}]}, $orderby: { 'sStatus' :-1 }", fields = "{'sStatus': 1,'sEstimate' : 1,'sEstimateTime' : 1}")
 	List<Feature> getSprintBacklogTotal(String sTeamID, String currentISODateTime, String agileTypeAggregate, String agileType);
 

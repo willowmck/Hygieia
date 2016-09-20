@@ -187,8 +187,9 @@ public class FeatureServiceImpl implements FeatureService {
 		if (agileType.isPresent()
 				&& FeatureCollectorConstants.KANBAN_SPRINT_ID.equalsIgnoreCase(agileType.get())) {
 			// Kanban
-			relevantFeatureEstimates = featureRepository.getInProgressFeaturesEstimatesByTeamId(
-					teamId, getCurrentISODateTime(), EQUAL, FeatureCollectorConstants.KANBAN_SPRINT_ID);
+			relevantFeatureEstimates = featureRepository.getInProgressKanbanFeaturesEstimatesByTeamId(
+					teamId, getOneMonthAgoISODateTime(), getCurrentISODateTime(), EQUAL, 
+                    FeatureCollectorConstants.KANBAN_SPRINT_ID);
 		} else if (agileType.isPresent()
 				&& FeatureCollectorConstants.SCRUM_SPRINT_ID.equalsIgnoreCase(agileType.get())) {
 			// Scrum

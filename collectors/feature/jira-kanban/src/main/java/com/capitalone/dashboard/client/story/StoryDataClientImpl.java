@@ -173,6 +173,8 @@ public class StoryDataClientImpl implements StoryDataClient {
 
 				processFeatureData(feature, issue);
                 
+                processEpicData(feature, issue);
+                
                 processSprintData(feature);
 					
 				featuresToSave.add(feature);
@@ -259,6 +261,17 @@ public class StoryDataClientImpl implements StoryDataClient {
 		feature.setsOwnersIsDeleted(TOOLS.toCanonicalList(Collections.<String>emptyList()));
 	}
 	
+    private void processEpicData(Feature feature, Issue issue) {
+        feature.setsEpicID(issue.getKey());
+        feature.setsEpicNumber("");
+        feature.setsEpicName(issue.getSummary());
+        feature.setsEpicBeginDate("");
+        feature.setsEpicEndDate("");
+        feature.setsEpicType("");
+        feature.setsEpicAssetState("");
+        feature.setsEpicChangeDate("");
+    }
+    
 	private void processSprintData(Feature feature) {
         /*
          * For Kanban, associate a generic, never-ending
