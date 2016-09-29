@@ -45,3 +45,5 @@ logs
 application.properties
 
 *.zip
+
+UI/nbactions.xml
