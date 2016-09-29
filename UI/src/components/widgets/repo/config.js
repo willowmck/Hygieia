@@ -17,6 +17,9 @@
 			name: 'GitHub',
 			value: 'GitHub'
 		}, {
+            name: 'GitLab',
+            value: 'GitLab'
+        }, {
 			name: 'Subversion',
 			value: 'Subversion'
 		},{
@@ -44,6 +47,7 @@
 
 		ctrl.repoUrl = widgetConfig.options.url;
 		ctrl.gitBranch = widgetConfig.options.branch;
+        ctrl.token = widgetConfig.options.token;
 		ctrl.repouser = widgetConfig.options.userID;
 		ctrl.repopass = widgetConfig.options.password;
 
@@ -75,6 +79,7 @@
 					if (ctrl.repoOption.name === widgetConfig.options.scm.name &&
 						ctrl.repoUrl === widgetConfig.options.url &&
 						ctrl.gitBranch === widgetConfig.options.branch &&
+                        ctrl.token === widgetConfig.options.token &&
 						ctrl.repouser === widgetConfig.options.userID &&
 						ctrl.repopass === widgetConfig.options.password) {
 						$modalInstance.close();
@@ -121,7 +126,7 @@
 		function createCollectorItem() {
 			var item = {};
 
-			if (ctrl.repoOption.name.indexOf("GitHub") != -1) {
+			if (ctrl.repoOption.name.indexOf("GitHub") !== -1) {
 
 				item = {
 					collectorId: _.findWhere(ctrl.collectors, {name: 'GitHub'}).id,
@@ -133,7 +138,18 @@
 						password: ctrl.repopass
 					}
 				};
-			} else if (ctrl.repoOption.name.indexOf("Bitbucket") != -1) {
+			} else if (ctrl.repoOption.name.indexOf("GitLab") !== -1) {
+                
+                item = {
+                    collectorId: _.findWhere(ctrl.collectors, {name: 'GitLab'}).id,
+                    options: {
+                        scm: 'GitLab',
+                        url: ctrl.repoUrl,
+                        branch: ctrl.gitBranch,
+                        token: ctrl.token
+                    }
+                }
+            } else if (ctrl.repoOption.name.indexOf("Bitbucket") !== -1) {
 
 				item = {
 					collectorId: _.findWhere(ctrl.collectors, {name: 'Bitbucket'}).id,
