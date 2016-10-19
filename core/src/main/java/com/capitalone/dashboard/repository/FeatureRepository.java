@@ -83,7 +83,7 @@ public interface FeatureRepository extends CrudRepository<Feature, ObjectId>,
 	@Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?2 : ?3}} , {'sSprintBeginDate' : {$lte : ?1}} , {'sSprintEndDate' : {$gte : ?1}}]}, $orderby: { 'sStatus' :-1 }", fields = "{'sStatus': 1,'sEstimate' : 1,'sEstimateTime' : 1}")
 	List<Feature> getSprintBacklogTotal(String sTeamID, String currentISODateTime, String agileTypeAggregate, String agileType);
 
-    @Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?3 : ?4}} , {'sSprintBeginDate' : {$lte : ?2}} , {'sSprintEndDate' : {$gte : ?3}} , {'sStatus' : 'Done'}]}", fields = "{'sStatus' : 1, 'sEstimate' : 1, 'sEstimateTime' : 1}")
+    @Query(value = " {'sTeamID' : ?0 , 'isDeleted' : 'False', $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?3 : ?4}} , {'changeDate' : {$gte : ?1}}, {'sStatus' : 'Done'}]}", fields = "{'sStatus' : 1, 'sEstimate' : 1, 'sEstimateTime' : 1}")
     List<Feature> getKanbanThroughput(String sTeamID, String oneMonthAgoTime, String currentISODateTime, String agileTypeAggregate, String agileType);
     
 	@Query(value = " {'sTeamID' : ?0 , $and : [{'isDeleted' : 'False'} , {'sState' : 'Active'}] , $or : [{'sStatus' : 'In Progress'} , {'sStatus' : 'Waiting'} , {'sStatus' : 'Impeded'}] , $and : [{'sSprintID' : {$ne : null}} , {'sSprintID' : {?2 : ?3}} , {'sSprintBeginDate' : {$lte : ?1}} , {'sSprintEndDate' : {$gte : ?1}}]}, $orderby: { 'sStatus' :-1 }", fields = "{'sStatus': 1,'sEstimate' : 1,'sEstimateTime' : 1}")

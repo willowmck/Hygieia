@@ -277,5 +277,7 @@
       </build>
     </profile>
   </profiles>
-
+    <modules>
+        <module>collectors/build/jenkins-behave</module>
+    </modules>
 </project>
