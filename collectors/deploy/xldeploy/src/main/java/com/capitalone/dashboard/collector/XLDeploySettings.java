@@ -12,10 +12,9 @@ import java.util.List;
 @ConfigurationProperties(prefix = "xldeploy")
 public class XLDeploySettings {
     private String cron;
-    private List<String> usernames;
-    private List<String> passwords;
+    private String username;
+    private String password;
     private List<String> servers;
-    private List<String> niceNames;
 
     public String getCron() {
         return cron;
@@ -25,20 +24,20 @@ public class XLDeploySettings {
         this.cron = cron;
     }
 
-    public List<String> getUsernames() {
-        return usernames;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsernames(List<String> usernames) {
-        this.usernames = usernames;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public List<String> getPasswords() {
-        return passwords;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswords(List<String> passwords) {
-        this.passwords = passwords;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<String> getServers() {
@@ -47,13 +46,5 @@ public class XLDeploySettings {
 
     public void setServers(List<String> servers) {
         this.servers = servers;
-    }
-    
-    public List<String> getNiceNames() {
-    	return niceNames;
-    }
-    
-    public void setNiceNames(List<String> niceNames) {
-    	this.niceNames = niceNames;
     }
 }

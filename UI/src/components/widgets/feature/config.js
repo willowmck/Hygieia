@@ -35,8 +35,6 @@
 		ctrl.featureTypeOptions = [];
 		ctrl.estimateMetricType = "";
 		ctrl.estimateMetrics = [{type: "hours", value: "Hours"}, {type: "storypoints", value: "Story Points" }];
-		ctrl.sprintType = "";
-		ctrl.sprintTypes = [{type: "scrum", value: "Scrum"}, {type: "kanban", value: "Kanban"}, {type: "scrumkanban", value:"Both"}];
 
 
 		// Request collectors
@@ -48,7 +46,6 @@
 				processCollectorItemsResponse);
 		
 		initEstimateMetricType(widgetConfig);
-		initSprintType(widgetConfig);
 
 		function processCollectorItemsResponse(data, currentCollectorItemId) {
 			var scopeOwners = [];
@@ -141,12 +138,10 @@
 				if ((ctrl.selectedTypeIndex === undefined) || (ctrl.selectedTypeIndex === null)) {
 					ctrl.collectorId = '';
 					ctrl.hideScopeOwnerDropDown = true;
-					ctrl.hideSprintTypeDropDown = true;
 				} else {
 					ctrl.valid = true;
 					ctrl.collectorId = ctrl.featureTypeOptions[ctrl.selectedTypeIndex];
 					ctrl.hideScopeOwnerDropDown = false;
-					ctrl.hideSprintTypeDropDown = false;
 				}
 			}
 		}
@@ -156,14 +151,6 @@
 				ctrl.estimateMetricType = widgetConfig.options.estimateMetricType;
 			} else {
 				ctrl.estimateMetricType = 'storypoints';
-			}
-		}
-		
-		function initSprintType(widgetConfig) {
-			if (widgetConfig && widgetConfig.options && widgetConfig.options.sprintType) {
-				ctrl.sprintType = widgetConfig.options.sprintType;
-			} else {
-				ctrl.sprintType = 'kanban';
 			}
 		}
 
@@ -183,7 +170,6 @@
 			if (ctrl.collectorId == null || ctrl.collectorId === "") {
 				ctrl.hideScopeOwnerDropDown = true;
 				ctrl.hideEstimateMetricDropDown = true;
-				ctrl.hideSprintTypeDropDown = true;
 			} else {
 				if (ctrl.collectorId.value === 'Jira') {
 					ctrl.hideEstimateMetricDropDown = false;
@@ -191,7 +177,6 @@
 					ctrl.hideEstimateMetricDropDown = true;
 				}
 				ctrl.hideScopeOwnerDropDown = false;
-				ctrl.hideSprintTypeDropDown = false;
 			}
 		}
 
@@ -209,12 +194,12 @@
 					id : widgetConfig.options.id,
 					teamName : ctrl.collectorItemId.teamName,
 					teamId : ctrl.collectorItemId.teamId,
-					showStatus : { // starting configuration for what is currently showing. Needs to be mutually exclusive!
-				      kanban: "kanban" === ctrl.sprintType || "scrumkanban" === ctrl.sprintType,
-				      scrum: "scrum" === ctrl.sprintType
+					showStatus : {
+				      kanban: true,
+				      scrum: false
 				    },
-					estimateMetricType : ctrl.estimateMetricType,
-					sprintType: ctrl.sprintType
+					intervalOff : 2,
+					estimateMetricType : ctrl.estimateMetricType
 				},
 				componentId : modalData.dashboard.application.components[0].id,
 				collectorItemId : ctrl.collectorItemId.value

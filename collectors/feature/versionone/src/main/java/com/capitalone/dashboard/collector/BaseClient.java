@@ -49,7 +49,6 @@ public abstract class BaseClient {
 
         JSONArray tmpDetailArray = (JSONArray) outPutMainArray.get(0);
         while (!CollectionUtils.isEmpty(tmpDetailArray)) {
-            LOGGER.debug("pageIndex = " + pageIndex + " pageSize = " + pageSize + " tmpDetailArray = " + tmpDetailArray.size());
             updateMongoInfo(tmpDetailArray);
             pageIndex = pageIndex + pageSize;
             vOneApi.buildPagingQuery(pageIndex);

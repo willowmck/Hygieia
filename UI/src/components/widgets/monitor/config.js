@@ -20,8 +20,6 @@
 
         // variables
         ctrl.appName = modalData.dashboard.application.name;
-        ctrl.url = modalData.dashboard.application.url;
-
         ctrl.newDashboardServices = [];
         ctrl.newDependentServices = [];
 
@@ -83,8 +81,7 @@
                 .map(function (item) {
                     return {
                         id: item.id,
-                        name: item.applicationName + ': ' + item.name,
-                        url: item.applicationName + ': ' + item.url
+                        name: item.applicationName + ': ' + item.name
                     };
                 })
                 .value();
@@ -149,7 +146,7 @@
                     return item.name.toLowerCase();
                 })
                 .forEach(function (item) {
-                    promises.push(monitorData.createService(dashboardId, item.name, item.url));
+                    promises.push(monitorData.createService(dashboardId, item.name));
                 });
 
             whereName(_.map(ctrl.newDependentServices, function (item) {

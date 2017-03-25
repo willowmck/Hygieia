@@ -46,7 +46,6 @@ udeploy.cron=${UDEPLOY_CRON:-0 0/5 * * * *}
 
 #UDeploy server (required) - Can provide multiple
 udeploy.servers[0]=${UDEPLOY_URL:-http://udeploy.company.com}
-udeploy.niceNames[0]=${UDEPLOY_NAME:-UDeploy}
 
 #UDeploy user name (required)
 udeploy.username=${UDEPLOY_USERNAME:-bobama}

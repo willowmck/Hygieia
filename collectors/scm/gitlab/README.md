@@ -59,42 +59,32 @@ You will need to provide an **application.properties** file that contains inform
 ### Sample application.properties file
 
 ```#Database Name 
-# Database Name
-dbname=dashboard
+database=dashboard
 
-# Database HostName - default is localhost
+#Database HostName - default is IP docker container mongodb
 dbhost=localhost
 
-# Database Port - default is 27017
+#Database Port - default is 27017
 dbport=27017
 
-# MongoDB replicaset
-dbreplicaset=[false if you are not using MongoDB replicaset]
-dbhostport=[host1:port1,host2:port2,host3:port3]
-
-# Database Username - default is blank
+#Database Username - default is blank
 dbusername=db
 
-# Database Password - default is blank
+#Database Password - default is blank
 dbpassword=dbpass
-
-# Logging File location
-logging.file=./logs/gitlab.log
 
 #Collector schedule (required)
 gitlab.cron=0 0/1 * * * *
 
-#Gitlab host (optional)
-gitlab.host=gitlab.company.com
+#Gitlab server (optional)
+gitlab.server=https://gitlab.company.com/
 
-#If your instance of Gitlab is using a self signed certificate, set to true, default is false
-gitlab.selfSignedCertificate=false
+gitlab.branche=master
 
 #set apiKey to use HTTPS Auth
 gitlab.apiToken=
 
-#Maximum number of days to go back in time when fetching commits
-gitlab.commitThresholdDays=15
+gitlab.saveLog=true
 ```
 
 >>>>>>> capitalone/master

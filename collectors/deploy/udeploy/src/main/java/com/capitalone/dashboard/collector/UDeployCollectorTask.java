@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +68,7 @@ public class UDeployCollectorTask extends CollectorTask<UDeployCollector> {
 
     @Override
     public UDeployCollector getCollector() {
-        return UDeployCollector.prototype(uDeploySettings.getServers(), uDeploySettings.getNiceNames());
+        return UDeployCollector.prototype(uDeploySettings.getServers());
     }
 
     @Override
@@ -248,16 +247,11 @@ public class UDeployCollectorTask extends CollectorTask<UDeployCollector> {
 
         log("All apps", start, applications.size());
         for (UDeployApplication application : applications) {
-        	UDeployApplication existing = findExistingApplication(collector, application);
 
-        	String niceName = getNiceName(application, collector);
-            if (existing == null) {
+            if (isNewApplication(collector, application)) {
                 application.setCollectorId(collector.getId());
                 application.setEnabled(false);
                 application.setDescription(application.getApplicationName());
-                if (StringUtils.isNotEmpty(niceName)) {
-                	application.setNiceName(niceName);
-                }
                 try {
                     uDeployApplicationRepository.save(application);
                 } catch (org.springframework.dao.DuplicateKeyException ce) {
@@ -265,33 +259,17 @@ public class UDeployCollectorTask extends CollectorTask<UDeployCollector> {
 
                 }
                 count++;
-            } else if (StringUtils.isEmpty(existing.getNiceName()) && StringUtils.isNotEmpty(niceName)) {
-				existing.setNiceName(niceName);
-				uDeployApplicationRepository.save(existing);
             }
 
         }
         log("New apps", start, count);
     }
 
-    private UDeployApplication findExistingApplication(UDeployCollector collector,
+    private boolean isNewApplication(UDeployCollector collector,
                                      UDeployApplication application) {
         return uDeployApplicationRepository.findUDeployApplication(
                 collector.getId(), application.getInstanceUrl(),
-                application.getApplicationId());
-    }
-    
-    private String getNiceName(UDeployApplication application, UDeployCollector collector) {
-        if (CollectionUtils.isEmpty(collector.getUdeployServers())) return "";
-        List<String> servers = collector.getUdeployServers();
-        List<String> niceNames = collector.getNiceNames();
-        if (CollectionUtils.isEmpty(niceNames)) return "";
-        for (int i = 0; i < servers.size(); i++) {
-            if (servers.get(i).equalsIgnoreCase(application.getInstanceUrl()) && niceNames.size() > i) {
-                return niceNames.get(i);
-            }
-        }
-        return "";
+                application.getApplicationId()) == null;
     }
 
     @SuppressWarnings("unused")

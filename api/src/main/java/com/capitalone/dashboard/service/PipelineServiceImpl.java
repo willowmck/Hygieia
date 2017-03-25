@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service("pipeline")
+@Service
 public class PipelineServiceImpl implements PipelineService {
 
     private static final int PROD_COMMIT_DATE_RANGE_DEFAULT = -90;

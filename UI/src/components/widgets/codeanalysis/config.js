@@ -19,7 +19,6 @@
         ctrl.testToolsDropdownPlaceholder = 'Loading Functional Test Jobs...';
 
         // public methods
-        ctrl.caLoading = true;
         ctrl.submit = submitForm;
         ctrl.addTestConfig = addTestConfig;
         ctrl.deleteTestConfig = deleteTestConfig;
@@ -43,7 +42,6 @@
 
             ctrl.caCollectorItem = caCollectorItemId ? _.findWhere(ctrl.caJobs, {id: caCollectorItemId}) : null;
             ctrl.caToolsDropdownPlaceholder = data.length ? 'Select a Code Analysis Job' : 'No Code Analysis Job Found';
-            ctrl.caLoading = false;
         }
 
         function processSaResponse(data) {

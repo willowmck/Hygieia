@@ -6,6 +6,7 @@
                 <!--current services-->
                 <div class="dash-modal-row clearfix" ng-repeat="service in ctrl.dashboardServices">
                     <label>{{service.name}}</label>
+
                     <dash-trash class="pull-right fa-lg" ng-click="ctrl.deleteDashboardService($index)"></dash-trash>
                 </div>
 
@@ -16,10 +17,7 @@
                         {{::ctrl.appName}}&nbsp;:&nbsp;
                     </label>
                     <span class="form-control-inline-container">
-                        <input class="form-control" type="text" ng-model="service.name" placeholder="Service Name"
-                               required/>
-                        <input class="form-control" type="url" ng-model="service.url" placeholder="Service URL"
-                               required/>
+                        <input class="form-control" type="text" ng-model="service.name" placeholder="Service Name"/>
                     </span>
                 </div>
 
@@ -41,6 +39,7 @@
                 <!--dependent services-->
                 <div class="dash-modal-row clearfix" ng-repeat="service in ctrl.dependentServices">
                     <dash-trash class="pull-right fa-lg" ng-click="ctrl.deleteDependentService($index)"></dash-trash>
+
                     <label class="control-label">{{service.name}}</label>
                 </div>
 

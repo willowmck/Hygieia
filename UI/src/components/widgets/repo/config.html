@@ -31,11 +31,7 @@
 			   required />
 	</form-group>
 
-<<<<<<< HEAD
 	<form-group ng-if="repoConfig.repoOption.name == 'GitHub'  || repoConfig.repoOption.name == 'Bitbucket' || repoConfig.repoOption.name == 'GitLab'"
-=======
-	<form-group ng-if="repoConfig.repoOption.name == 'GitHub'  || repoConfig.repoOption.name == 'Bitbucket' || repoConfig.repoOption.name == 'Gitlab'"
->>>>>>> capitalone/master
 				errors="{required:'Branch is required'}"
 				input="gitBranch"
 				class="text-center">
@@ -52,7 +48,7 @@
 
 	</form-group>
 
-	<form-group ng-if="repoConfig.repoOption.name != 'Gitlab'" input="repouser"
+	<form-group input="repouser"
 				errors="{}">
 
 		<label class="modal-label">Credentials (Optional)</label>
@@ -65,7 +61,7 @@
 			   autocomplete="off"
 			   placeholder="Enter your repo username"/>
 	</form-group>
-	<form-group ng-if="repoConfig.repoOption.name != 'Gitlab'" input="repopass"
+	<form-group input="repopass"
 				errors="{errorEncryptingPassword: 'Error encrypting password.'}">
 		<input type="password"
 			   name="repopass"
@@ -73,20 +69,6 @@
 			   ng-model="repoConfig.repopass"
 			   maxlength="100"
 			   placeholder="Enter your repo password" />
-	</form-group>
-
-	<form-group ng-if="repoConfig.repoOption.name == 'Gitlab'" input="repokey"
-				errors="{}">
-
-		<label class="modal-label">API Key (Optional, required for private repos)</label>
-
-		<input type="password"
-			   name="repokey"
-			   class="form-control text-center"
-			   ng-model="repoConfig.repouser"
-			   maxlength="25"
-			   autocomplete="off"
-			   placeholder="Enter your api key"/>
 	</form-group>
 
 	<div class="button-row row text-center">

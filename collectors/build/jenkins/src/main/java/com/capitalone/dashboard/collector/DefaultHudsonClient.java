@@ -7,7 +7,6 @@ import com.capitalone.dashboard.model.RepoBranch;
 import com.capitalone.dashboard.model.SCM;
 import com.capitalone.dashboard.util.Supplier;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
@@ -150,9 +150,7 @@ public class DefaultHudsonClient implements HudsonClient {
             throw rce;
         } catch (MalformedURLException mfe) {
             LOG.error("malformed url for loading jobs", mfe);
-        } catch (URISyntaxException e1) {
-        	LOG.error("wrong syntax url for loading jobs", e1);
-		}
+        }
         return result;
     }
 
@@ -415,42 +413,14 @@ public class DefaultHudsonClient implements HudsonClient {
                 return BuildStatus.Unknown;
         }
     }
-    
-    @SuppressWarnings("PMD")
-    protected ResponseEntity<String> makeRestCall(String sUrl) throws MalformedURLException, URISyntaxException {
+
+    protected ResponseEntity<String> makeRestCall(String sUrl) throws MalformedURLException {
         URI thisuri = URI.create(sUrl);
         String userInfo = thisuri.getUserInfo();
 
         //get userinfo from URI or settings (in spring properties)
-        if (StringUtils.isEmpty(userInfo)) {
-        	List<String> servers = this.settings.getServers();
-        	List<String> usernames = this.settings.getUsernames();
-        	List<String> apiKeys = this.settings.getApiKeys();
-        	if (CollectionUtils.isNotEmpty(servers) && CollectionUtils.isNotEmpty(usernames) && CollectionUtils.isNotEmpty(apiKeys)) {
-        		boolean exactMatchFound = false;
-	        	for (int i = 0; i < servers.size(); i++) {
-	        		if ((servers.get(i) != null)) {
-	        			String domain1 = getDomain(sUrl);
-	        			String domain2 = getDomain(servers.get(i));
-	        			if (StringUtils.isNotEmpty(domain1) && StringUtils.isNotEmpty(domain2) && domain1.equals(domain2)
-	        					&& getPort(sUrl) == getPort(servers.get(i))) {
-	                		exactMatchFound = true;	
-	        			}
-	        			if (exactMatchFound && (i < usernames.size()) && (i < apiKeys.size()) 
-	        					&& (StringUtils.isNotEmpty(usernames.get(i))) && (StringUtils.isNotEmpty(apiKeys.get(i)))) {
-	        				userInfo = usernames.get(i) + ":" + apiKeys.get(i);
-        				}
-	        			if (exactMatchFound) {
-	        				break;
-	        			}
-	        		}
-	        	}	        	
-        		if (!exactMatchFound) {
-        			LOG.warn("Credentials for the following url was not found. This could happen if the domain/subdomain/IP address "
-        					+ "in the build url returned by Jenkins and the Jenkins instance url in your Hygieia configuration do not match: "
-        					+ "\"" + sUrl + "\"");
-        		}
-        	}
+        if (StringUtils.isEmpty(userInfo) && (this.settings.getUsername() != null) && (this.settings.getApiKey() != null)) {
+            userInfo = this.settings.getUsername() + ":" + this.settings.getApiKey();
         }
         // Basic Auth only.
         if (StringUtils.isNotEmpty(userInfo)) {
@@ -462,17 +432,6 @@ public class DefaultHudsonClient implements HudsonClient {
                     String.class);
         }
 
-    }
-    
-    private String getDomain(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        String domain = uri.getHost();
-        return domain;
-    }
-    
-    private int getPort(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        return uri.getPort();
     }
 
     protected HttpHeaders createHeaders(final String userInfo) {
@@ -490,9 +449,7 @@ public class DefaultHudsonClient implements HudsonClient {
             return makeRestCall(joinURL(buildUrl, "consoleText")).getBody();
         } catch (MalformedURLException mfe) {
             LOG.error("malformed url for build log", mfe);
-        } catch (URISyntaxException e) {
-        	LOG.error("wrong syntax url for build log", e);
-		}
+        }
 
         return "";
     }

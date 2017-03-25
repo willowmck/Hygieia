@@ -1,25 +1,34 @@
 package com.capitalone.dashboard.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.capitalone.dashboard.config.MongoConfig;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.ScopeOwnerCollectorItem;
 
-public class ScopeOwnerRepositoryTest extends FongoBaseRepositoryTest {
+import org.bson.types.ObjectId;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+@ContextConfiguration(classes = { MongoConfig.class })
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+public class ScopeOwnerRepositoryTest {
 	private static ScopeOwnerCollectorItem mockV1ScopeOwner;
 	private static ScopeOwnerCollectorItem mockJiraScopeOwner;
 	private static ScopeOwnerCollectorItem mockJiraScopeOwner2;
@@ -32,6 +41,9 @@ public class ScopeOwnerRepositoryTest extends FongoBaseRepositoryTest {
 	private static String maxDateLoser = new String();
 	private static final ObjectId jiraCollectorId = new ObjectId();
 	private static final ObjectId v1CollectorId = new ObjectId();
+
+	@ClassRule
+	public static final EmbeddedMongoDBRule RULE = new EmbeddedMongoDBRule();
 
 	@Autowired
 	private ScopeOwnerRepository scopeOwnerRepo;

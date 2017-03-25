@@ -27,23 +27,16 @@ You will need to provide an **application.properties** file that contains inform
 dbname=dashboard
 
 # Database HostName - default is localhost
-dbhost=localhost
+dbhost=10.0.1.1
 
 # Database Port - default is 27017
-dbport=27017
-
-# MongoDB replicaset
-dbreplicaset=[false if you are not using MongoDB replicaset]
-dbhostport=[host1:port1,host2:port2,host3:port3]
+dbport=9999
 
 # Database Username - default is blank
 dbusername=db
 
 # Database Password - default is blank
 dbpassword=dbpass
-
-# Logging File location
-logging.file=./logs/github.log
 
 # Collector schedule (required)
 github.cron=0 0/5 * * * *

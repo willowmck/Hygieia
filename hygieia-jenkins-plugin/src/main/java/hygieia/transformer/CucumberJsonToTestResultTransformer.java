@@ -152,7 +152,6 @@ public class CucumberJsonToTestResultTransformer implements Transformer<JSONArra
     }
 
     private TestCaseCondition getTestCondition(JSONObject cond) {
-        if (cond == null) return null;
         TestCaseCondition condition = new TestCaseCondition();
         JSONObject match = (JSONObject) cond.get("match");
         if (match == null) return null;
@@ -217,9 +216,7 @@ public class CucumberJsonToTestResultTransformer implements Transformer<JSONArra
     }
 
     private String getString(JSONObject json, String key) {
-        if (json == null) return "";
-        Object obj = json.get(key);
-        return (obj == null) ? "" : (String) obj;
+        return (String) json.get(key);
     }
 
     private long getLong(JSONObject json, String key) {

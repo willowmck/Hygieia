@@ -15,14 +15,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
@@ -85,7 +83,7 @@ public class XLDeployCollectorTask extends CollectorTask<XLDeployCollector>{
 	
     @Override
     public XLDeployCollector getCollector() {
-        return XLDeployCollector.prototype(xlDeploySettings.getServers(), xlDeploySettings.getNiceNames());
+        return XLDeployCollector.prototype(xlDeploySettings.getServers());
     }
     
     @Override
@@ -306,16 +304,11 @@ public class XLDeployCollectorTask extends CollectorTask<XLDeployCollector>{
 
         log("All apps", start, applications.size());
         for (XLDeployApplication application : applications) {
-        	XLDeployApplication existing = findExistingApplication(collector, application);
 
-        	String niceName = getNiceName(application, collector);
-            if (existing == null) {
+            if (isNewApplication(collector, application)) {
                 application.setCollectorId(collector.getId());
                 application.setEnabled(false);
                 application.setDescription(application.getApplicationName());
-                if (StringUtils.isNotEmpty(niceName)) {
-                	application.setNiceName(niceName);
-                }
                 try {
                     xlDeployApplicationRepository.save(application);
                 } catch (org.springframework.dao.DuplicateKeyException ce) {
@@ -323,33 +316,17 @@ public class XLDeployCollectorTask extends CollectorTask<XLDeployCollector>{
 
                 }
                 count++;
-            } else if (StringUtils.isEmpty(existing.getNiceName()) && StringUtils.isNotEmpty(niceName)) {
-				existing.setNiceName(niceName);
-                xlDeployApplicationRepository.save(existing);
             }
+
         }
-        
         log("New apps", start, count);
     }
 
-    private XLDeployApplication findExistingApplication(XLDeployCollector collector,
+    private boolean isNewApplication(XLDeployCollector collector,
                                      XLDeployApplication application) {
         return xlDeployApplicationRepository.findXLDeployApplication(
                 collector.getId(), application.getInstanceUrl(),
-                application.getApplicationId());
-    }
-    
-    private String getNiceName(XLDeployApplication application, XLDeployCollector collector) {
-        if (CollectionUtils.isEmpty(collector.getXLdeployServers())) return "";
-        List<String> servers = collector.getXLdeployServers();
-        List<String> niceNames = collector.getNiceNames();
-        if (CollectionUtils.isEmpty(niceNames)) return "";
-        for (int i = 0; i < servers.size(); i++) {
-            if (servers.get(i).equalsIgnoreCase(application.getInstanceUrl()) && niceNames.size() > i) {
-                return niceNames.get(i);
-            }
-        }
-        return "";
+                application.getApplicationId()) == null;
     }
     
     private EnvironmentComponent getEnvironmentComponent(XLDeployApplicationHistoryItem data, XLDeployApplication application) {

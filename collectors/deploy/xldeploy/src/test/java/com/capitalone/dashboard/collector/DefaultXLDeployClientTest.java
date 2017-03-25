@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -43,7 +42,6 @@ public class DefaultXLDeployClientTest {
     public void init() {
         when(restOperationsSupplier.get()).thenReturn(rest);
         settings = new XLDeploySettings();
-        settings.setServers(Collections.singletonList("http://xldeploy.company.com"));
         defaultXLDeployClient = new DefaultXLDeployClient(settings, restOperationsSupplier);
     }
     

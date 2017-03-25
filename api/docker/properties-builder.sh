@@ -26,7 +26,4 @@ dbusername=${SPRING_DATA_MONGODB_USERNAME:-db}
 
 #Database Password - default is blank
 dbpassword=${SPRING_DATA_MONGODB_PASSWORD:-dbpass}
-
-feature.dynamicPipeline=${FEATURE_DYNAMIC_PIPELINE:-disabled}
-systemConfig.multipleDeploymentServers=${CONFIG_GLOBAL_MULTIPLE_DEPLOYMENT_SERVERS:-false}
 EOF

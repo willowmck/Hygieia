@@ -30,10 +30,6 @@ dbhost=localhost
 # Database Port - default is 27017
 dbport=9999
 
-# MongoDB replicaset
-dbreplicaset=[false if you are not using MongoDB replicaset]
-dbhostport=[host1:port1,host2:port2,host3:port3]
-
 # Database Username - default is blank
 dbusername=db
 
@@ -52,8 +48,8 @@ jenkins.servers[1]=http://username:token@jenkins.company.com
 
 # Another option: If using same username/password Jenkins auth,
 #   set username/apiKey to use HTTP Basic Auth (blank=no auth)
-jenkins.usernames[0]=
-jenkins.apiKeys[0]=
+jenkins.username=
+jenkins.apiKey=
 
 # Determines if build console log is collected - defaults to false
 jenkins.saveLog=true

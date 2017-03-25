@@ -15,7 +15,6 @@ public class UDeploySettings {
     private String username;
     private String password;
     private List<String> servers;
-    private List<String> niceNames;
 
     public String getCron() {
         return cron;
@@ -47,13 +46,5 @@ public class UDeploySettings {
 
     public void setServers(List<String> servers) {
         this.servers = servers;
-    }
-    
-    public List<String> getNiceNames() {
-    	return niceNames;
-    }
-    
-    public void setNiceNames(List<String> niceNames) {
-    	this.niceNames = niceNames;
     }
 }

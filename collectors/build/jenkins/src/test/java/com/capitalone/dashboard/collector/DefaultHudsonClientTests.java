@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,12 +115,8 @@ public class DefaultHudsonClientTests {
                 eq(headers), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("", HttpStatus.OK));
 
-        List<String> servers = Collections.singletonList("http://user:pass@jenkins.com");
-        List<String> usernames = Collections.singletonList("doesnt");
-        List<String> apiKeys = Collections.singletonList("matter");
-        settings.setServers(servers);
-        settings.setUsernames(usernames);
-        settings.setApiKeys(apiKeys);
+        settings.setApiKey("doesnt");
+        settings.setUsername("matter");
         defaultHudsonClient.makeRestCall("http://user:pass@jenkins.com");
         verify(rest).exchange(Matchers.any(URI.class), eq(HttpMethod.GET),
                 eq(headers), eq(String.class));
@@ -138,12 +132,8 @@ public class DefaultHudsonClientTests {
                 eq(headers), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("", HttpStatus.OK));
 
-        List<String> servers = Collections.singletonList("http://user:pass@jenkins.com");
-        List<String> usernames = Collections.singletonList("does");
-        List<String> apiKeys = Collections.singletonList("matter");
-        settings.setServers(servers);
-        settings.setUsernames(usernames);
-        settings.setApiKeys(apiKeys);
+        settings.setApiKey("matter");
+        settings.setUsername("does");
         defaultHudsonClient.makeRestCall("http://jenkins.com");
         verify(rest).exchange(Matchers.any(URI.class), eq(HttpMethod.GET),
                 eq(headers), eq(String.class));
@@ -159,12 +149,8 @@ public class DefaultHudsonClientTests {
                 eq(headers), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("", HttpStatus.OK));
 
-        List<String> servers = Collections.singletonList("http://user:pass@jenkins.com");
-        List<String> usernames = Collections.singletonList("does");
-        List<String> apiKeys = Collections.singletonList("matter");
-        settings.setServers(servers);
-        settings.setUsernames(usernames);
-        settings.setApiKeys(apiKeys);
+        settings.setApiKey("matter");
+        settings.setUsername("does");
         defaultHudsonClient.getLog("http://jenkins.com");
         verify(rest).exchange(eq(URI.create("http://jenkins.com/consoleText")), eq(HttpMethod.GET),
                 eq(headers), eq(String.class));

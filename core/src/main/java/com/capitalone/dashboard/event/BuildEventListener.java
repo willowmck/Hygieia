@@ -92,8 +92,7 @@ public class BuildEventListener extends HygieiaMongoEventListener<Build> {
             Pipeline pipeline = getOrCreatePipeline(teamDashboard);
 
             for (SCM scm : build.getSourceChangeSet()) {
-            	// we want to use the build start time since the timestamp was just the time that the collector ran
-                PipelineCommit commit = new PipelineCommit(scm, build.getStartTime());
+                PipelineCommit commit = new PipelineCommit(scm, build.getTimestamp());
                 pipeline.addCommit(PipelineStageType.Build.name(), commit);
             }
 
@@ -167,7 +166,7 @@ public class BuildEventListener extends HygieiaMongoEventListener<Build> {
                 Build b = failedBuilds.next();
                 if (b.getCollectorItemId().equals(successfulBuild.getCollectorItemId())) {
                     for (SCM scm : b.getSourceChangeSet()) {
-                        PipelineCommit failedBuildCommit = new PipelineCommit(scm, successfulBuild.getStartTime());
+                        PipelineCommit failedBuildCommit = new PipelineCommit(scm, successfulBuild.getTimestamp());
                         pipeline.addCommit(PipelineStageType.Build.name(), failedBuildCommit);
                         successfulBuild.getSourceChangeSet().add(scm);
                     }

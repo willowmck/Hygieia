@@ -27,7 +27,7 @@ public class Commit extends SCM {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    void setId(ObjectId id) {
         this.id = id;
     }
 

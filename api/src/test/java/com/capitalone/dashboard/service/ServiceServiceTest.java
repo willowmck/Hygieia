@@ -4,7 +4,6 @@ import com.capitalone.dashboard.model.*;
 import com.capitalone.dashboard.repository.DashboardRepository;
 import com.capitalone.dashboard.repository.ServiceRepository;
 import org.bson.types.ObjectId;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -49,25 +48,21 @@ public class ServiceServiceTest {
     }
 
     @Test
-    //@Ignore
     public void create() {
         final ObjectId id = ObjectId.get();
         final String name = "service";
-        final String url = "https://abc123456.com";
         final Dashboard dashboard = new Dashboard("template", "title", new Application("app"), "amit", DashboardType.Team);
         when(dashboardRepository.findOne(id)).thenReturn(dashboard);
 
-        Service service=serviceService.create(id, name,url);
+        serviceService.create(id, name);
 
         verify(serviceRepository).save(argThat(new ArgumentMatcher<Service>() {
             @Override
             public boolean matches(Object o) {
-
                 Service service = (Service) o;
-               //return true;
                 return service.getName().equals(name) &&
                         service.getDashboardId().equals(id) &&
-                        service.getStatus().equals(ServiceStatus.Warning) &&
+                        service.getStatus().equals(ServiceStatus.Ok) &&
                         service.getApplicationName().equals(dashboard.getApplication().getName());
             }
         }));
